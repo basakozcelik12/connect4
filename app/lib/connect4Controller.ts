@@ -37,7 +37,7 @@ export class Connect4Controller {
 
     // This method needs to be implemented!
     this.board[0][column] = this.currentPlayer;
-  
+
     return this.getStatus();
   }
 

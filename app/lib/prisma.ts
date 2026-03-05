@@ -7,4 +7,3 @@ export const prisma =
   new PrismaClient({
     log: ["error"],
   });
-

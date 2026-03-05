@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Connect4Controller,
-  GameStatus,
-} from "../lib/connect4Controller";
+import { Connect4Controller, GameStatus } from "../lib/connect4Controller";
 
 type GridProps = {
   controller: Connect4Controller;
@@ -17,7 +14,9 @@ const PIECE_COLOURS = {
 };
 
 export default function Grid({ controller }: GridProps) {
-  const [gameStatus, setGameStatus] = useState<GameStatus>(() => controller.newGame());
+  const [gameStatus, setGameStatus] = useState<GameStatus>(() =>
+    controller.newGame(),
+  );
 
   const handleColumnClick = (column: number) => {
     if (gameStatus.state !== "ongoing") return;
