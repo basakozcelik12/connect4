@@ -114,4 +114,121 @@ describe("Connect4Controller", () => {
       expect(controller.getStatus().currentPlayer).toBe(1);
     });
   });
+
+  describe("win detection", () => {
+    describe("horizontal win", () => {
+      it("should detect 4 in a row horizontally", () => {
+        const controller = new Connect4Controller(7, 6);
+        controller.newGame();
+
+        controller.makeMove(0);
+        controller.makeMove(4);
+        controller.makeMove(1);
+        controller.makeMove(4);
+        controller.makeMove(2);
+        controller.makeMove(4);
+        const status = controller.makeMove(3);
+
+        expect(status?.state).toBe("won");
+        expect(status?.winner).toBe(1);
+      });
+    });
+
+    describe("vertical win", () => {
+      it("should detect 4 in a row vertically", () => {
+        const controller = new Connect4Controller(7, 6);
+        controller.newGame();
+
+        controller.makeMove(0);
+        controller.makeMove(1);
+        controller.makeMove(0);
+        controller.makeMove(1);
+        controller.makeMove(0);
+        controller.makeMove(1);
+        const status = controller.makeMove(0);
+
+        expect(status?.state).toBe("won");
+        expect(status?.winner).toBe(1);
+      });
+    });
+
+    describe("diagonal win", () => {
+      it("should detect 4 in a row diagonally up-right", () => {
+        const controller = new Connect4Controller(7, 6);
+        controller.newGame();
+        // Game moves: P1(0), P2(1), P1(1), P2(2), P1(2), P2(3), P1(3), P2(5), P1(2), P2(3), P1(3)
+        // Diagram of final board state (1=player1, 2=player2, 0=empty):
+        // Column: 0 1 2 3 4 5 6
+        // Row 0:  0 0 0 0 0 0 0
+        // Row 1:  0 0 0 0 0 0 0
+        // Row 2:  0 0 0 1 0 0 0
+        // Row 3:  0 0 1 2 0 0 0
+        // Row 4:  0 1 1 1 0 0 0
+        // Row 5:  1 2 2 2 0 2 0
+        // Player 1 wins diagonally up-right from (5,0) to (2,3)
+
+        controller.makeMove(0);
+        controller.makeMove(1);
+        controller.makeMove(1);
+        controller.makeMove(2);
+        controller.makeMove(2);
+        controller.makeMove(3);
+        controller.makeMove(3);
+        controller.makeMove(5);
+        controller.makeMove(2);
+        controller.makeMove(3);
+        const status = controller.makeMove(3);
+
+        expect(status?.state).toBe("won");
+        expect(status?.winner).toBe(1);
+      });
+
+      it("should detect 4 in a row diagonally up-left", () => {
+        const controller = new Connect4Controller(7, 6);
+        controller.newGame();
+
+        // Game moves: P1(3), P2(2), P1(2), P2(1), P1(1), P2(0), P1(1), P2(0), P1(0), P2(6), P1(0)
+        // Diagram of final board state (1=player1, 2=player2, 0=empty):
+        // Column: 0 1 2 3 4 5 6
+        // Row 0:  0 0 0 0 0 0 0
+        // Row 1:  0 0 0 0 0 0 0
+        // Row 2:  1 0 0 0 0 0 0
+        // Row 3:  1 1 0 0 0 0 0
+        // Row 4:  2 1 1 0 0 0 0
+        // Row 5:  2 2 2 1 0 0 2
+        // Player 1 wins diagonally up-left from (2,0) to (5,3)
+
+        controller.makeMove(3);
+        controller.makeMove(2);
+        controller.makeMove(2);
+        controller.makeMove(1);
+        controller.makeMove(1);
+        controller.makeMove(0);
+        controller.makeMove(1);
+        controller.makeMove(0);
+        controller.makeMove(0);
+        controller.makeMove(6);
+        const status = controller.makeMove(0);
+
+        expect(status?.state).toBe("won");
+        expect(status?.winner).toBe(1);
+      });
+    });
+  });
+
+  describe("draw detection", () => {
+    it("should detect draw when board is full with no winner", () => {
+      const controller = new Connect4Controller(2, 2);
+      controller.newGame();
+
+      controller.makeMove(0);
+      controller.makeMove(1);
+      controller.makeMove(0);
+      controller.makeMove(1);
+
+      const status = controller.getStatus();
+      expect(status?.state).toBe("draw");
+      expect(status?.winner).toBeUndefined();
+    });
+  });
 });
