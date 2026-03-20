@@ -14,6 +14,7 @@ export class Connect4Controller {
   private board: Player[][];
   private currentPlayer: Player = 1;
   private gameState: GameState = "idle";
+  private readonly WIN_CONDITION = 4;
 
   constructor(width: number, height: number) {
     this.width = width;
@@ -48,7 +49,13 @@ export class Connect4Controller {
     if (row === -1) return null;
 
     this.board[row][column] = this.currentPlayer;
-    this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
+    if (this.checkWin(row, column)) {
+      this.gameState = "won";
+    } else if (this.isBoardFull()) {
+      this.gameState = "draw";
+    } else {
+      this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
+    }
 
     return this.getStatus();
   }
@@ -60,5 +67,54 @@ export class Connect4Controller {
       winner: this.gameState === "won" ? this.currentPlayer : undefined,
       currentPlayer: this.currentPlayer,
     };
+  }
+
+  private isBoardFull(): boolean {
+    for (let col = 0; col < this.width; col++) {
+      if (this.board[0][col] === 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private checkWin(starRow: number, startCol: number): boolean {
+    const directions: [number, number][] = [
+      [0, 1],
+      [1, 0],
+      [1, 1],
+      [1, -1],
+    ];
+
+    for (const [rowDirection, colDirection] of directions) {
+      const count =
+        1 +
+        this.searchInDirection(starRow, startCol, rowDirection, colDirection) +
+        this.searchInDirection(starRow, startCol, -rowDirection, -colDirection);
+
+      if (count >= this.WIN_CONDITION) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private searchInDirection(
+    starRow: number,
+    startCol: number,
+    rowDirection: number,
+    colDirection: number,
+  ): number {
+    let count = 0;
+    let row = starRow + rowDirection;
+    let col = startCol + colDirection;
+
+    while (this.board?.[row]?.[col] === this.currentPlayer) {
+      count++;
+      row += rowDirection;
+      col += colDirection;
+    }
+
+    return count;
   }
 }
