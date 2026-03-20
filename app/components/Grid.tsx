@@ -19,10 +19,10 @@ export default function Grid({ controller }: GridProps) {
     controller.newGame(),
   );
 
-  const handleColumnClick = (column: number) => {
+  const handleColumnClick = async (column: number) => {
     if (gameStatus.state !== "ongoing") return;
 
-    const newStatus = controller.makeMove(column);
+    const newStatus = await controller.makeMove(column);
     if (newStatus) {
       setGameStatus(newStatus);
     }
