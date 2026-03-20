@@ -33,7 +33,7 @@ export class Connect4Controller {
     return this.getStatus();
   }
 
-  public makeMove(column: number): GameStatus | null {
+  public async makeMove(column: number): Promise<GameStatus | null> {
     console.log("Dropping a token into a column:", column);
 
     if (column < 0 || column >= this.width) return null;
@@ -51,6 +51,10 @@ export class Connect4Controller {
     this.board[row][column] = this.currentPlayer;
     if (this.checkWin(row, column)) {
       this.gameState = "won";
+      await this.saveGameResult(
+        this.currentPlayer,
+        this.currentPlayer === 1 ? 2 : 1,
+      );
     } else if (this.isBoardFull()) {
       this.gameState = "draw";
     } else {
@@ -116,5 +120,15 @@ export class Connect4Controller {
     }
 
     return count;
+  }
+
+  private async saveGameResult(winner: number, loser: number): Promise<void> {
+    await fetch("/api/games", {
+      method: "POST",
+      body: JSON.stringify({
+        winner,
+        loser,
+      }),
+    });
   }
 }
