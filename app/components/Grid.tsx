@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Connect4Controller, GameStatus } from "../lib/connect4Controller";
+import { ResetButton } from "./ResetButton";
 
 type GridProps = {
   controller: Connect4Controller;
@@ -40,6 +41,8 @@ export default function Grid({ controller }: GridProps) {
     }
   };
 
+  const isGameOver = gameStatus.state === "won" || gameStatus.state === "draw";
+
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="text-lg font-semibold">{getStatusMessage()}</div>
@@ -66,6 +69,9 @@ export default function Grid({ controller }: GridProps) {
           )),
         )}
       </div>
+      {isGameOver && (
+        <ResetButton onClick={() => setGameStatus(controller.newGame())} />
+      )}
     </div>
   );
 }
