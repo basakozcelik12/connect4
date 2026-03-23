@@ -57,6 +57,7 @@ export class Connect4Controller {
       );
     } else if (this.isBoardFull()) {
       this.gameState = "draw";
+      await this.saveGameResult(0, 0);
     } else {
       this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
     }
