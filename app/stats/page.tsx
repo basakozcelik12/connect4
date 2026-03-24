@@ -7,14 +7,14 @@ import { useHistoricGames } from "@/app/hooks/useGames";
 import { useStats } from "@/app/hooks/useStats";
 
 export default function StatsPage() {
-  const { stats, loading: loadingStats, error: errorStats } = useStats();
+  const { stats, loading: isStatsLoading, error: statsErrorMessage } = useStats();
   const {
     historicGames,
     pagination,
-    loading: loadingGames,
-    error: errorGames,
+    loading: isGamesLoading,
+    error: gamesErrorMessage,
   } = useHistoricGames();
-  if ((loadingGames && !pagination) || (loadingStats && !stats)) {
+  if ((isGamesLoading && !pagination) || (isStatsLoading && !stats)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
         <main className="flex min-h-screen w-full max-w-3xl flex-col items-center gap-12 py-32 px-16 bg-white dark:bg-black">
@@ -31,7 +31,7 @@ export default function StatsPage() {
     );
   }
 
-  if (errorGames || errorStats) {
+  if (gamesErrorMessage || statsErrorMessage) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
         <main className="flex min-h-screen w-full max-w-3xl flex-col items-center gap-12 py-32 px-16 bg-white dark:bg-black">
@@ -40,7 +40,7 @@ export default function StatsPage() {
               Stats
             </h1>
             <p className="max-w-md text-lg leading-8 text-red-600 dark:text-red-400">
-              Error: {errorGames || errorStats}
+              Error: {gamesErrorMessage || statsErrorMessage}
             </p>
           </div>
         </main>
