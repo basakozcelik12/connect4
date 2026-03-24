@@ -1,5 +1,6 @@
 import { useRouter } from "next/navigation";
 import { HistoricGame } from "../lib/database.types";
+import PaginationButton from "./PaginationButton";
 
 interface StatsTableProps {
   historicGames: HistoricGame[];
@@ -75,25 +76,21 @@ export default function StatsTable({
         </tbody>
       </table>
       <div className="flex items-center justify-center gap-4 py-4">
-        <button
+        <PaginationButton
           disabled={page === 1}
           onClick={() => router.push(`?page=${page - 1}`, { scroll: false })}
-          className="px-4 py-2 text-sm font-medium rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          Previous
-        </button>
+          title="Previous"
+        />
 
         <span className="text-sm text-zinc-600 dark:text-zinc-400 font-medium">
           Page {page} of {totalPages}
         </span>
 
-        <button
+        <PaginationButton
           disabled={page === totalPages}
           onClick={() => router.push(`?page=${page + 1}`, { scroll: false })}
-          className="px-4 py-2 text-sm font-medium rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          Next
-        </button>
+          title="Next"
+        />
       </div>
     </div>
   );
