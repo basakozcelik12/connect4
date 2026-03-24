@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { HistoricGame } from "../lib/database.types";
 
 interface PaginationData {
@@ -9,14 +8,11 @@ interface PaginationData {
   limit: number;
 }
 
-export function useHistoricGames() {
+export function useHistoricGames(page: number) {
   const [historicGames, setHistoricGames] = useState<HistoricGame[]>([]);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const searchParams = useSearchParams();
-  const page = searchParams.get("page") || "1";
 
   useEffect(() => {
     const fetchGames = async () => {
