@@ -17,7 +17,7 @@ const getStatsCached = unstable_cache(
     };
   },
   ["stats"],
-  { tags: ["stats"] },
+  { tags: ["stats"], revalidate: 30 },
 );
 
 export async function GET() {

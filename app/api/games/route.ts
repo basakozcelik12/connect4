@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GameSubmission } from "@/app/lib/database.types";
 import { prisma } from "@/app/lib/prisma";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,7 +27,8 @@ export async function POST(request: NextRequest) {
         loser: body.loser,
       },
     });
-    revalidateTag("stats", {});
+    revalidateTag("stats", { expire: 0 });
+    revalidatePath("/stats");
     return NextResponse.json({ id: game.id, success: true }, { status: 201 });
   } catch (error) {
     console.error("Error saving game:", error);
