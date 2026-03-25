@@ -1,76 +1,44 @@
 "use client";
 
-import { useState } from "react";
-import { Connect4Controller, GameStatus } from "../lib/connect4Controller";
-import { ResetButton } from "./ResetButton";
+import { GameStatus } from "../lib/gameLogic";
+import { getPlayerColor } from "../lib/playerColors";
 
-type GridProps = {
-  controller: Connect4Controller;
-};
+interface GridProps {
+  gameStatus: GameStatus;
+  onColumnClick: (column: number) => void;
+  disabled?: boolean;
+}
 
-const PIECE_COLOURS = {
-  0: "transparent",
-  1: "rgb(239, 68, 68)",
-  2: "rgb(234, 179, 8)",
-};
-
-export default function Grid({ controller }: GridProps) {
-  const [gameStatus, setGameStatus] = useState<GameStatus>(() =>
-    controller.newGame(),
-  );
-
-  const handleColumnClick = async (column: number) => {
-    if (gameStatus.state !== "ongoing") return;
-
-    const newStatus = await controller.makeMove(column);
-    if (newStatus) {
-      setGameStatus(newStatus);
-    }
+export default function Grid({ gameStatus, onColumnClick, disabled = false }: GridProps) {
+  const handleColumnClick = (column: number) => {
+    if (disabled || gameStatus.state !== "ongoing") return;
+    onColumnClick(column);
   };
-
-  const getStatusMessage = () => {
-    switch (gameStatus.state) {
-      case "idle":
-        return "Game not started";
-      case "ongoing":
-        return `Player ${gameStatus.currentPlayer}'s turn`;
-      case "won":
-        return `Player ${gameStatus.winner} wins!`;
-      case "draw":
-        return "Draw!";
-    }
-  };
-
-  const isGameOver = gameStatus.state === "won" || gameStatus.state === "draw";
+  const width = gameStatus.board[0]?.length || 7;
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="text-lg font-semibold">{getStatusMessage()}</div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${controller.width}, minmax(0, 1fr))`,
-        }}
-      >
-        {gameStatus.board.map((row, rowIndex) =>
-          row.map((cell, colIndex) => (
-            <button
-              key={`${rowIndex}-${colIndex}`}
-              className="aspect-square w-10 h-10 border border-gray-500 dark:border-gray-700 transition-colors"
-              onClick={() => handleColumnClick(colIndex)}
-            >
-              <div
-                className="w-full h-full rounded-full"
-                style={{
-                  backgroundColor: PIECE_COLOURS[cell],
-                }}
-              />
-            </button>
-          )),
-        )}
-      </div>
-      {isGameOver && (
-        <ResetButton onClick={() => setGameStatus(controller.newGame())} />
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: `repeat(${width}, minmax(0, 1fr))`,
+      }}
+    >
+      {gameStatus.board.map((row, rowIndex) =>
+        row.map((cell, colIndex) => (
+          <button
+            key={`${rowIndex}-${colIndex}`}
+            className="aspect-square w-10 h-10 border border-gray-500 dark:border-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed"
+            onClick={() => handleColumnClick(colIndex)}
+            disabled={disabled}
+          >
+            <div
+              className="w-full h-full rounded-full"
+              style={{
+                backgroundColor: getPlayerColor(cell),
+              }}
+            />
+          </button>
+        )),
       )}
     </div>
   );
